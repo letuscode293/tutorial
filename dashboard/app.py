@@ -3,10 +3,10 @@ import os
 import requests
 import streamlit as st
 
-API_URL = os.getenv("CROP_AI_API_URL", "http://127.0.0.1:8000")
+API_URL = os.getenv("GDSS2026_API_URL", os.getenv("CROP_AI_API_URL", "http://127.0.0.1:8000"))
 
-st.set_page_config(page_title="CropAI", page_icon="🌾", layout="wide")
-st.title("CropAI")
+st.set_page_config(page_title="GDSS2026", page_icon="🌾", layout="wide")
+st.title("GDSS2026")
 st.caption("Crop & fertilizer recommendations — powered by FastAPI")
 
 

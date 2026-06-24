@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="CropAI API",
+    title="GDSS2026 API",
     description="Crop & fertilizer recommendation API",
     version="1.0.0",
     lifespan=lifespan,
@@ -37,6 +37,12 @@ app.add_middleware(
 @app.get("/health", response_model=HealthResponse)
 def health():
     return HealthResponse(status="ok", models_loaded=registry.status)
+
+
+@app.post("/reload-models")
+def reload_models():
+    registry.load_all()
+    return {"status": "ok", "models_loaded": registry.status}
 
 
 @app.post("/predict/crop", response_model=CropResponse)

@@ -1,4 +1,4 @@
-# CropAI — ML in Production Tutorial
+# GDSS2026 — ML in Production Tutorial
 
 Teach students the **real-world ML pipeline**: train → serialize → serve → UI → automate.
 
@@ -31,6 +31,7 @@ ML In production/
 ├── Notebooks/                # Training notebook
 ├── api/                      # Production serving layer
 ├── dashboard/                # Farmer-facing UI
+├── gdss2026_web/             # Django data manager (CSV import/export)
 ├── scripts/train_tabular.py  # Reproducible training script
 ├── tests/                    # Automated quality gate
 ├── .github/workflows/ci.yml  # Pipeline automation
@@ -66,10 +67,24 @@ Open http://localhost:8000/docs
 | `GET /health` | — | Which models are loaded |
 | `POST /predict/crop` | N,P,K,temp,humidity,ph,rainfall | crop + confidence |
 | `POST /predict/fertilizer` | soil, crop, nutrients | fertilizer + confidence |
+| `POST /reload-models` | — | Reload `.pkl` files after retrain |
 
 ---
 
-## Module 3 — UI (Deliver)
+## Module 3 — Data entry (Django)
+
+```bash
+cd gdss2026_web
+python manage.py runserver 8001
+```
+
+Open http://localhost:8001/
+
+Add records or upload CSV — the pipeline runs automatically (export → train → API reload).
+
+---
+
+## Module 4 — UI (Deliver)
 
 ```bash
 streamlit run dashboard/app.py
@@ -79,27 +94,35 @@ Open http://localhost:8501
 
 ---
 
-## Module 4 — Containerize
+## Module 5 — Containerize
 
 ```bash
-docker compose up --build
+./scripts/run_all.sh
+# or: docker compose up --build
 ```
+
+Starts API (8000), Django web (8001), and Streamlit (8501).
 
 ---
 
-## Module 5 — Automate
+## Module 6 — Automate
 
 `.github/workflows/ci.yml` on every push:
 
 1. `python scripts/train_tabular.py`
 2. `pytest tests/`
+3. Django migrate + export
+4. `python scripts/automate_pipeline.py`
+
+**Local automation:** adding data in `gdss2026_web` triggers the same pipeline without manual steps.
 
 ---
 
 ## Student checklist
 
-- [ ] Run `python scripts/train_tabular.py`
+- [ ] Run `./scripts/setup.sh`
 - [ ] Start API, verify `/docs`
+- [ ] Start Django web, add a record, confirm models retrain
 - [ ] Start Streamlit, test both tabs
-- [ ] Run `docker compose up`
+- [ ] Run `./scripts/run_all.sh`
 - [ ] Push to GitHub, watch CI pass

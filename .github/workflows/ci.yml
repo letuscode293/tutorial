@@ -1,8 +1,8 @@
-name: CropAI Pipeline CI
+name: GDSS2026 Pipeline CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, richard]
   pull_request:
 
 jobs:
@@ -16,10 +16,22 @@ jobs:
           python-version: "3.10"
 
       - name: Install dependencies
-        run: pip install fastapi uvicorn python-multipart pydantic scikit-learn joblib numpy pandas httpx pytest
+        run: |
+          pip install -r requirements.txt
+          pip install -r gdss2026_web/requirements.txt
 
       - name: Train tabular models (automated build step)
         run: python scripts/train_tabular.py
 
       - name: Run API tests
         run: pytest tests/ -v
+
+      - name: Verify Django data manager
+        run: |
+          cd gdss2026_web
+          python manage.py migrate
+          python manage.py load_datasets
+          python manage.py export_datasets
+
+      - name: Run full automation script
+        run: python scripts/automate_pipeline.py

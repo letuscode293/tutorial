@@ -4,12 +4,33 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./models:/app/models:ro
+      - ./models:/app/models
+      - ./datasets:/app/datasets:ro
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s
       timeout: 10s
       retries: 3
+
+  web:
+    image: python:3.10-slim
+    working_dir: /app/gdss2026_web
+    ports:
+      - "8001:8001"
+    environment:
+      AUTO_PIPELINE: "true"
+      API_RELOAD_URL: http://api:8000/reload-models
+      DJANGO_SETTINGS_MODULE: config.settings
+    volumes:
+      - .:/app
+    command: >
+      bash -c "pip install -q -r /app/gdss2026_web/requirements.txt -r /app/requirements.txt &&
+               python manage.py migrate &&
+               python manage.py load_datasets &&
+               python manage.py runserver 0.0.0.0:8001"
+    depends_on:
+      api:
+        condition: service_healthy
 
   dashboard:
     image: python:3.10-slim
@@ -17,7 +38,7 @@ services:
     ports:
       - "8501:8501"
     environment:
-      CROP_AI_API_URL: http://api:8000
+      GDSS2026_API_URL: http://api:8000
     volumes:
       - .:/app
     command: >

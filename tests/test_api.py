@@ -17,6 +17,15 @@ def test_health():
     assert "models_loaded" in data
 
 
+def test_reload_models():
+    client = TestClient(app)
+    response = client.post("/reload-models")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ok"
+    assert "models_loaded" in data
+
+
 def test_crop_prediction():
     client = TestClient(app)
     payload = {
