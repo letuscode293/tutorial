@@ -8,6 +8,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ml_pipeline
     steps:
       - uses: actions/checkout@v4
 
@@ -18,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Train tabular models (automated build step)
+      - name: Train tabular models
         run: python scripts/train_tabular.py
 
       - name: Run API tests

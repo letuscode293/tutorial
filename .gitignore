@@ -6,8 +6,8 @@ __pycache__/
 .env
 *.log
 
-# Django web app has its own repo: github.com/letuscode293/GDSS2026_web
-gdss2026_web/
+# data_entry has its own repo: github.com/letuscode293/GDSS2026_web
+data_entry/
 
-# Large image data — CSVs in datasets/ are committed
-datasets/PlantVillage/
+# Large image data
+ml_pipeline/datasets/PlantVillage/
