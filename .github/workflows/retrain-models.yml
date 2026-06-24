@@ -1,0 +1,40 @@
+name: Retrain models
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [retrain]
+  push:
+    branches: [richard, main, master]
+    paths:
+      - "datasets/**"
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Train tabular models
+        run: python scripts/train_tabular.py
+
+      - name: Run API tests
+        run: pytest tests/ -v
+
+      - name: Commit updated models
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add models/*.pkl
+          git diff --staged --quiet || git commit -m "Auto-retrain: update model artifacts [skip ci]"
+          git push

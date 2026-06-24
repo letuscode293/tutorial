@@ -105,16 +105,22 @@ Starts API (8000), Django web (8001), and Streamlit (8501).
 
 ---
 
-## Module 6 — Automate
+## Module 6 — Automate (GitHub Actions)
 
-`.github/workflows/ci.yml` on every push:
-
+**tutorial repo** — `.github/workflows/ci.yml` on every push:
 1. `python scripts/train_tabular.py`
 2. `pytest tests/`
-3. Django migrate + export
-4. `python scripts/automate_pipeline.py`
 
-**Local automation:** adding data in `gdss2026_web` triggers the same pipeline without manual steps.
+**GDSS2026_web repo** — `.github/workflows/retrain-from-database.yml`:
+1. Export data from Render PostgreSQL
+2. Train models in CI
+3. Push updated `models/*.pkl` to GitHub
+
+Trigger manually: GitHub → Actions → **Retrain from database** → Run workflow.
+
+On Render, set `GITHUB_RETRAIN=true` and `GITHUB_TOKEN` to auto-trigger after data changes.
+
+**Local automation:** `AUTO_PIPELINE=true` in the full monorepo exports, trains, and reloads FastAPI locally.
 
 ---
 
