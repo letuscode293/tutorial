@@ -33,4 +33,4 @@ cd ml_pipeline && streamlit run dashboard/app.py
 docker compose up --build
 ```
 
-See `ml_pipeline/TUTORIAL_PIPELINE.md` for the full guide.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for deploying all 3 services on Render (data entry + API + recommendation dashboard).

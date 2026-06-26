@@ -1,0 +1,37 @@
+# GDSS2026 ML services — API + recommendation dashboard
+# Render: New → Blueprint → connect this repo (branch: richard)
+#
+# Data entry app: deploy from GDSS2026_web repo (data_entry/render.yaml)
+
+services:
+  - type: web
+    name: gdss2026-api
+    runtime: python
+    plan: free
+    rootDir: ml_pipeline
+    branch: richard
+    autoDeploy: true
+    buildCommand: pip install -r requirements.txt
+    startCommand: bash scripts/start_api_render.sh
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+
+  - type: web
+    name: gdss2026-dashboard
+    runtime: python
+    plan: free
+    rootDir: ml_pipeline
+    branch: richard
+    autoDeploy: true
+    buildCommand: pip install -r requirements.txt
+    startCommand: bash scripts/start_dashboard_render.sh
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: GDSS2026_API_URL
+        fromService:
+          type: web
+          name: gdss2026-api
+          property: host

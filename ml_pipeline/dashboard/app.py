@@ -3,7 +3,17 @@ import os
 import requests
 import streamlit as st
 
-API_URL = os.getenv("GDSS2026_API_URL", os.getenv("CROP_AI_API_URL", "http://127.0.0.1:8000"))
+
+def _normalize_api_url(raw: str) -> str:
+    url = (raw or "http://127.0.0.1:8000").strip().rstrip("/")
+    if url and not url.startswith(("http://", "https://")):
+        url = f"https://{url}"
+    return url
+
+
+API_URL = _normalize_api_url(
+    os.getenv("GDSS2026_API_URL", os.getenv("CROP_AI_API_URL", "http://127.0.0.1:8000"))
+)
 
 st.set_page_config(page_title="GDSS2026", page_icon="🌾", layout="wide")
 st.title("GDSS2026")
